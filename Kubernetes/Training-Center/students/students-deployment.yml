@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: students
+  labels:
+    app: students
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: students
+  template:
+    metadata:
+      labels:
+        app: students
+    spec:
+      containers:
+        - name: students
+          image: melcheng/students
+          ports:
+            - containerPort: 8000
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:mysql://registrar-mysql:3306/mail"
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: regisrationsystem-secret
+                  key: username
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: regisrationsystem-secret
+                  key: password
+            - name: SPRING_PROFILES_ACTIVE
+              value: "kubernetes"
+          volumeMounts:
+            - name: students-config
+              mountPath: "/config"
+              readOnly: true
+          imagePullPolicy: Always
+      imagePullSecrets:
+        - name: regcred
+      volumes:
+        - name: students-config
+          configMap:
+            name: students-config

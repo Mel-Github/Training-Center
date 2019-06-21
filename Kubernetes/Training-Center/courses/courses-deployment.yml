@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: courses
+  labels:
+    app: courses
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: courses
+  template:
+    metadata:
+      labels:
+        app: courses
+    spec:
+      containers:
+        - name: courses
+          image: melcheng/courses
+          ports:
+            - containerPort: 9000
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:mysql://registrar-mysql:3306/training-center-courses"
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: regisrationsystem-secret
+                  key: username
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: regisrationsystem-secret
+                  key: password
+#            - name: JAVA_OPTIONS
+#              value: -Dspring.profiles.active=kubernetes
+            - name: SPRING_PROFILES_ACTIVE
+              value: "kubernetes"
+          volumeMounts:
+            - name: courses-config
+              mountPath: "/config"
+              readOnly: true
+          imagePullPolicy: Always
+      volumes:
+        - name: courses-config
+          configMap:
+            name: courses-config
+

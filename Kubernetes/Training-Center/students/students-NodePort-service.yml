@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: students-nodeport
+  labels:
+    app: students-registration
+spec:
+  type: NodePort
+  ports:
+    - port: 8000
+      nodePort: 30093
+  selector:
+    app: students

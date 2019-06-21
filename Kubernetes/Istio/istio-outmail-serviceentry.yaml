@@ -1,0 +1,14 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: email
+spec:
+  hosts:
+    - "mail.gandi.net"
+  addresses:
+    - 217.70.178.9/32
+  location: MESH_EXTERNAL
+  ports:
+    - number: 587
+      name: tls
+      protocol: tcp

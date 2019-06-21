@@ -1,0 +1,18 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: email
+spec:
+  hosts:
+    - "*.gandi.net"
+  tls:
+    - match:
+        - port: 587
+          sni_hosts:
+            - "mail.gandi.net"
+      route:
+        - destination:
+            host: "mail.gandi.net"
+            port:
+              number: 587
+          weight: 100
